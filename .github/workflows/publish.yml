@@ -1,0 +1,26 @@
+name: Publish to ComfyUI Registry
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Publish to ComfyUI Registry
+        run: |
+          curl -X POST https://comfyregistry.org/api/publish \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.COMFY_REGISTRY_TOKEN }}" \
+            -d '{
+              "repository": "https://github.com/${{ github.repository }}",
+              "version": "${{ steps.version.outputs.VERSION }}"
+            }'
