@@ -266,6 +266,8 @@ async def kotari_download(request):
                         filename = url.split("/")[-1].split("?")[0]
                     if not filename:
                         filename = "downloaded_file"
+                    # Clean up filename: remove semicolons and other problematic chars
+                    filename = filename.split(";")[0].strip()
 
                 filepath = os.path.join(dest_dir, filename)
                 total = resp.content_length or 0
