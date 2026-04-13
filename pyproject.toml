@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "comfyui-kotari"
+description = "ComfyUI-Kotari: File Manager for ComfyUI - Download models, clone repos, manage files entirely through the UI without terminal access"
+version = "1.0.0"
+license = {file = "LICENSE"}
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/karthikg-09/ComfyUI-Kotari"
+
+[tool.comfy]
+PublisherId = "kg-09"
+DisplayName = "ComfyUI-Kotari"
+Icon = "https://raw.githubusercontent.com/karthikg-09/ComfyUI-Kotari/main/icon.png"
