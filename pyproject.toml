@@ -15,4 +15,4 @@ Repository = "https://github.com/karthikg-09/ComfyUI-Kotari"
 [tool.comfy]
 PublisherId = "kg-09"
 DisplayName = "ComfyUI-Kotari"
-Icon = "https://raw.githubusercontent.com/karthikg-09/ComfyUI-Kotari/main/icon.png"
+Icon = ""
