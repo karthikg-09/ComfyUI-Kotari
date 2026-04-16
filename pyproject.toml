@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "comfyui-kotari"
 description = "ComfyUI-Kotari: File Manager for ComfyUI - Download models, clone repos, manage files entirely through the UI without terminal access"
-version = "1.0.0"
+version = "1.0.1"
 license = {file = "LICENSE"}
 dependencies = []
 
