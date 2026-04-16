@@ -358,6 +358,58 @@ async def kotari_git_clone(request):
 
 
 # ---------------------------------------------------------------------------
+# GET /kotari/export_file?path=...  — serve a server file to the browser
+# ---------------------------------------------------------------------------
+
+@routes.get("/kotari/export_file")
+async def kotari_export_file(request):
+    raw = request.query.get("path", "")
+    target = _safe_path(raw)
+
+    if not target:
+        return web.json_response({"error": "path required"}, status=400)
+    if not os.path.isfile(target):
+        return web.json_response({"error": "Not a file"}, status=404)
+
+    filename = os.path.basename(target)
+    file_size = os.path.getsize(target)
+
+    # Encode filename for Content-Disposition (handle non-ASCII names)
+    try:
+        filename.encode("ascii")
+        disposition = f'attachment; filename="{filename}"'
+    except UnicodeEncodeError:
+        from urllib.parse import quote
+        disposition = f"attachment; filename*=UTF-8''{quote(filename)}"
+
+    response = web.StreamResponse(
+        status=200,
+        headers={
+            "Content-Disposition": disposition,
+            "Content-Length": str(file_size),
+            "Content-Type": "application/octet-stream",
+            "Cache-Control": "no-cache",
+        },
+    )
+    await response.prepare(request)
+
+    try:
+        with open(target, "rb") as f:
+            while True:
+                chunk = f.read(1024 * 256)  # 256 KB chunks
+                if not chunk:
+                    break
+                await response.write(chunk)
+    except Exception as e:
+        traceback.print_exc()
+        # Headers already sent — can't return a JSON error, just close
+        pass
+
+    await response.write_eof()
+    return response
+
+
+# ---------------------------------------------------------------------------
 # POST /kotari/upload  (multipart: file + destination)
 # ---------------------------------------------------------------------------
 

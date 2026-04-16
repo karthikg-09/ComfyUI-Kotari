@@ -586,6 +586,9 @@ function render() {
       const previewBtn = !item.is_dir && isPreviewable(item.name)
         ? `<button data-preview="${item.name}" title="Preview">👁</button>`
         : "";
+      const exportBtn = !item.is_dir
+        ? `<button data-export="${item.name}" title="Download to local">⬇</button>`
+        : "";
       fileListHtml += `
         <div class="kotari-file-item${selected}" data-name="${item.name}" data-isdir="${item.is_dir}">
           <span class="kotari-file-icon">${icon}</span>
@@ -593,6 +596,7 @@ function render() {
           <span class="kotari-file-size">${sizeStr}</span>
           <span class="kotari-file-actions">
             ${previewBtn}
+            ${exportBtn}
             <button data-rename="${item.name}" title="Rename">✏️</button>
             <button class="danger" data-delete="${item.name}" title="Delete">🗑</button>
           </span>
@@ -751,6 +755,22 @@ function bindEvents() {
     state.previewContent = null;
     render();
   };
+
+  // Export (download to local) buttons
+  rootEl.querySelectorAll("[data-export]").forEach((btn) => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const name = btn.dataset.export;
+      const filePath = state.currentPath + "/" + name;
+      const url = api.apiURL("/kotari/export_file?path=" + encodeURIComponent(filePath));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    };
+  });
 
   // Rename buttons
   rootEl.querySelectorAll("[data-rename]").forEach((btn) => {
